@@ -1,6 +1,15 @@
 version: '3'
 
 services:
+
+  rabbitmq:
+      image: rabbitmq:management
+      ports:
+        - "5672:5672"
+        - "15672:15672"
+      networks:
+        - api-network
+
   admin:
     build: ./admin_api
     container_name: admin_api
@@ -43,3 +52,7 @@ services:
       MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
+
+networks:
+  api-network:
+    driver: bridge
