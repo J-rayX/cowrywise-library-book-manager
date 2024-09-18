@@ -76,12 +76,17 @@ class BorrowBookView(APIView):
         
         # create new Borrowing instance
         return_date = timezone.now() + timedelta(days=int(borrow_days))
-        borrowing = Borrowing.objects.create(
-            user=user,
-            book_id=book_id,
-            borrow_days=borrow_days,
-            return_date=return_date
-        )
+        try:
+            borrowing = Borrowing.objects.create(
+                user=user,
+                book_id=book_id,
+                borrow_days=borrow_days,
+                return_date=return_date
+            )
+        except Exception as e:
+            return JsonResponse({
+                'error': 'An error occurred while borrowing the book.', 'detail': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         # update local UserBook model
         book.available = False
@@ -90,55 +95,72 @@ class BorrowBookView(APIView):
         
         # send message to rabbitmq
         try:
-            self.send_borrow_event_to_queue(book_id, False, return_date)
+            message = {
+                'book_id': book_id,
+                'available':  book.available,
+                'return_date': return_date.isoformat(),
+                'borrow_days': borrow_days,
+                'borrowed_by': user_email
+            }
+            self.send_borrow_message_to_queue(message)
+            return JsonResponse({'message': 'Book borrowed successfully', 'borrowing_id': borrowing.id },
+                                status=status.HTTP_201_CREATED)
+
         except Exception as e:
             return JsonResponse({
-                'error': 'Failed to notify the admin_api about borrowing', 'detail': str(e)},
+                'error': 'Failed to notify the admin about borrowing', 'detail': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         
-        return JsonResponse({'message': 'Book borrowed successfully', 'borrowing_id': borrowing.id}, status=status.HTTP_201_CREATED)
+        return JsonResponse({
+            'message': 'Book borrowed successfully',
+            'borrowing_id': borrowing.id
+        }, status=status.HTTP_201_CREATED)
 
+    def send_borrow_message_to_queue(self, message):
+        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        channel = connection.channel()
+        channel.queue_declare(queue='book_borrowed', durable=False)
 
-    def send_borrow_event_to_queue(self, book_id, available, return_date):
-        try:
-            connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
-            # connection = pika.BlockingConnection(pika.ConnectionParameters(host=settings.RABBITMQ_HOST,port=settings.RABBITMQ_PORT))
-            channel = connection.channel()
-            channel.queue_declare(queue='book_borrowed')
+        channel.basic_publish(
+            exchange='',
+            routing_key='book_borrowed',
+            body=json.dumps(message),
+            properties=pika.BasicProperties(content_type='application/json')
+        )
+        connection.close()
+        print(f"Message sent to book_borrowed queue")
 
-            # put message on 'book_borrowed' queue
-            message = json.dumps({
-                'book_id': book_id,
-                'available': available,
-                'return_date': return_date.isoformat() if return_date else None
-            })
-
-            channel.basic_publish(exchange='', routing_key='book_borrowed', body=message)
-            print(f"Sent borrow event for book ID: {book_id}, Return Date: {return_date}")
-        except Exception as e:
-            print(f"Unable to reach rabbitmq: {str(e)}")
-        finally:
-            if connection:
-                connection.close()
-
-
+        
 
 class AvailableBooksView(APIView):
     def get(self, request):
-        available_books = UserBook.objects.filter(available=True)
-        books_list = [
-            {
-                'book_id': book.book_id,
-                'title': book.title,
-                'author': book.author,
-                'publisher': book.publisher,
-                'category': book.category,
-            }
-            for book in available_books
-        ]
-        return JsonResponse({'books': books_list}, status=status.HTTP_200_OK)
-
+        try:
+            publisher = request.GET.get('publisher')
+            category = request.GET.get('category')
+          
+            available_books = UserBook.objects.filter(available=True)
+            if publisher:
+                available_books = available_books.filter(publisher=publisher)
+            if category:
+                available_books = available_books.filter(category=category)
+            
+            books_list = [
+                {
+                    'book_id': book.book_id,
+                    'title': book.title,
+                    'author': book.author,
+                    'publisher': book.publisher,
+                    'category': book.category,
+                }
+                for book in available_books
+            ]
+            if not books_list:
+                return JsonResponse({'message': 'No available books found'}, status=status.HTTP_404_NOT_FOUND)
+            return JsonResponse({'books': books_list}, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            return JsonResponse({'error': 'An error occurred while fetching books. ', 'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class GetBookByIdView(APIView):
@@ -159,3 +181,40 @@ class GetBookByIdView(APIView):
         except UserBook.DoesNotExist:
             return JsonResponse({'error': 'Book not found'}, status=status.HTTP_404_NOT_FOUND)
 
+
+
+class FilterAllBooksView(APIView):
+    def get(self, request):
+        publisher = request.GET.get('publisher', None) 
+        category = request.GET.get('category', None)   
+
+        try: 
+
+            books = UserBook.objects.all()
+            if publisher:
+                books = books.filter(publisher__icontains=publisher)
+            if category:
+                books = books.filter(category__icontains=category)
+
+            books_list = [
+                {
+                    'book_id': book.book_id,
+                    'title': book.title,
+                    'author': book.author,
+                    'publisher': book.publisher,
+                    'category': book.category,
+                    'available': book.available,
+                    'return_date': book.return_date
+                }
+                for book in books
+            ]
+
+            if not books_list:
+                return JsonResponse({'message': 'No books found with the provided filters'}, status=status.HTTP_404_NOT_FOUND)
+            
+            return JsonResponse({'books': books_list}, status=status.HTTP_200_OK)
+        
+        # except UserBook.DoesNotExist:
+        #     return JsonResponse({'error': 'Book not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return JsonResponse({'error': 'Something went wrong', 'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
