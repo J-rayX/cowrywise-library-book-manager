@@ -98,7 +98,7 @@ class AddBookView(APIView):
             )
         )
         connection.close()
-
+        
 
 
 class RemoveBookView(APIView):
@@ -140,3 +140,18 @@ class RemoveBookView(APIView):
 
 
 
+class UnavailableBooksView(APIView):
+    def get(self, request):
+        unavailable_books = Book.objects.filter(available=False)
+        books_list = [
+            {
+                'book_id': book.book_id,
+                'title': book.title,
+                'author': book.author,
+                'publisher': book.publisher,
+                'category': book.category,
+                'available_date': book.return_date
+            }
+            for book in unavailable_books
+        ]
+        return JsonResponse({'books': books_list}, status=status.HTTP_200_OK)

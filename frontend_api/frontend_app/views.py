@@ -121,3 +121,41 @@ class BorrowBookView(APIView):
         finally:
             if connection:
                 connection.close()
+
+
+
+class AvailableBooksView(APIView):
+    def get(self, request):
+        available_books = UserBook.objects.filter(available=True)
+        books_list = [
+            {
+                'book_id': book.book_id,
+                'title': book.title,
+                'author': book.author,
+                'publisher': book.publisher,
+                'category': book.category,
+            }
+            for book in available_books
+        ]
+        return JsonResponse({'books': books_list}, status=status.HTTP_200_OK)
+
+
+
+class GetBookByIdView(APIView):
+    def get(self, request, book_id):
+        try:
+            book = UserBook.objects.get(book_id=book_id)
+            book_data = {
+                'book_id': book.book_id,
+                'title': book.title,
+                'author': book.author,
+                'publisher': book.publisher,
+                'category': book.category,
+                'available': book.available,
+                'added_at': book.added_at,
+                'return_date': book.return_date
+            }
+            return JsonResponse(book_data, status=status.HTTP_200_OK)
+        except UserBook.DoesNotExist:
+            return JsonResponse({'error': 'Book not found'}, status=status.HTTP_404_NOT_FOUND)
+
