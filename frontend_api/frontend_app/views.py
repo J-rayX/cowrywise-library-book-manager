@@ -34,6 +34,9 @@ class UserEnrollmentView(APIView):
                 {"error": "The [email, firstname, lastname] fields are required."},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        
+       
+        
         if User.objects.filter(email=email).exists():
             return JsonResponse(
                 {"error": "A user with this email already exists."},
@@ -42,6 +45,20 @@ class UserEnrollmentView(APIView):
 
         try:
             user = User.objects.create(email=email, firstname=firstname, lastname=lastname)
+            try:
+                message = {
+                    'email': user.email,
+                    'firstname': user.firstname,
+                    'lastname': user.lastname,
+                }
+
+                self.send_user_enrolled_message(message)
+            except Exception as e:
+                return JsonResponse({
+                    'error': 'Failed to notify admin_api about user enrollment',
+                    'detail': str(e)
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
             return JsonResponse(
                 {"message": f"New user, {user.firstname} {user.lastname} enrolled! 🔥"},
                 status=status.HTTP_201_CREATED
@@ -51,6 +68,22 @@ class UserEnrollmentView(APIView):
                 {"error": str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
+    
+    def send_user_enrolled_message(self, message):
+        """ Sends user enrolled message to RabbitMQ """
+        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        channel = connection.channel()
+        channel.queue_declare(queue='user_enrolled', durable=False)
+
+        channel.basic_publish(
+            exchange='',
+            routing_key='user_enrolled',
+            body=json.dumps(message),
+            properties=pika.BasicProperties(
+                delivery_mode=2
+            )
+        )
+        connection.close()
 
 
 

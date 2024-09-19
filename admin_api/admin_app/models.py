@@ -21,3 +21,15 @@ class Book(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['title', 'author'], name='unique_book')
         ]
+
+
+
+class AdminUser(models.Model):
+    email = models.EmailField(unique=True)
+    firstname = models.CharField(max_length=100)
+    lastname = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.firstname} {self.lastname}"
+

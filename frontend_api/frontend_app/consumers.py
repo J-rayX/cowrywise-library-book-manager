@@ -59,7 +59,7 @@ def consume_book_added():
     # configure rabbitmq consumer
     channel.basic_consume(queue='book_added', on_message_callback=callback, auto_ack=True)
     
-    print('Waiting for messages...')
+    print('Waiting for new book addition messages...')
     channel.start_consuming()
 
 
@@ -91,5 +91,5 @@ def consume_book_removed():
     # configure rabbitmq consumer
     channel.basic_consume(queue='book_removed', on_message_callback=callback, auto_ack=True)
     
-    print('Waiting for messages...')
+    print('Waiting for book removal messages...')
     channel.start_consuming()
