@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 # from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
-from .models import Book
+from .models import Book, AdminUser
 import pika
 import json
 from django.conf import settings
@@ -155,3 +155,28 @@ class UnavailableBooksView(APIView):
             for book in unavailable_books
         ]
         return JsonResponse({'books': books_list}, status=status.HTTP_200_OK)
+
+
+
+class AdminUserListView(APIView):
+    def get(self, request):
+        try:
+            users = AdminUser.objects.all()
+            user_list = [{
+                    'email': user.email,
+                    'firstname': user.firstname,
+                    'lastname': user.lastname,
+                    'created_at': user.created_at
+                } for user in users
+            ]
+
+            return JsonResponse({'users': user_list}, status=status.HTTP_200_OK)
+
+        except AdminUser.DoesNotExist:
+            return JsonResponse({'error': 'No users found'}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            return JsonResponse(
+                {'error': 'An error occurred while fetching users', 'detail': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
