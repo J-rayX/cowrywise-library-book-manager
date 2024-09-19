@@ -1,6 +1,6 @@
 import pika
 import json
-from .models import Book, AdminUser
+from .models import Book, AdminUser, AdminBorrowing
 from django.utils.dateparse import parse_datetime
 
 
@@ -15,8 +15,13 @@ def consume_borrowed():
         book_id = data['book_id']
         available = data['available']
         return_date_str = data['return_date']
-
         return_date = parse_datetime(return_date_str)
+
+        try:
+            user = AdminUser.objects.get(email=data['borrowed_by'])
+        except AdminUser.DoesNotExist:
+            print(f"User with email {data['borrowed_by']} not found in AdminUser")
+            return
 
         try:
             book = Book.objects.get(book_id=book_id)
@@ -24,6 +29,15 @@ def consume_borrowed():
             book.return_date = return_date
             book.save()
             print(f"Updated book {book.title} as unavailable and {book.return_date} return_date.")
+
+            AdminBorrowing.objects.create(
+                user=user,
+                book_id=data['book_id'],
+                borrow_days=data['borrow_days'],
+                return_date=return_date
+            )
+            print(f"Borrowing record created for user {user.email}")
+        
         except Book.DoesNotExist:
             print(f"Book with ID {book_id} does not exist")
 

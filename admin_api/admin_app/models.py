@@ -33,3 +33,16 @@ class AdminUser(models.Model):
     def __str__(self):
         return f"{self.firstname} {self.lastname}"
 
+
+
+
+class AdminBorrowing(models.Model):
+    user = models.ForeignKey(AdminUser, on_delete=models.CASCADE)
+    book_id = models.IntegerField()  # From Admin API
+    borrowed_date = models.DateTimeField(auto_now_add=True)
+    borrow_days = models.IntegerField()
+    return_date = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.user} borrowed book with ID {self.book_id}"
+    

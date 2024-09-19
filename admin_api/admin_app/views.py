@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 # from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
-from .models import Book, AdminUser
+from .models import Book, AdminUser, AdminBorrowing
 import pika
 import json
 from django.conf import settings
@@ -178,5 +178,39 @@ class AdminUserListView(APIView):
         except Exception as e:
             return JsonResponse(
                 {'error': 'An error occurred while fetching users', 'detail': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+
+
+
+class UserBorrowingListView(APIView):
+    def get(self, request):
+        try:
+            users = AdminUser.objects.all()
+            user_borrowing_list = []
+
+            for user in users:
+                borrowings = AdminBorrowing.objects.filter(user=user)
+                borrowed_books = [
+                    {
+                        'book_id': borrowing.book_id,
+                        'borrow_days': borrowing.borrow_days,
+                        'return_date': borrowing.return_date
+                    }
+                    for borrowing in borrowings
+                ]
+                user_borrowing_list.append({
+                    'user_email': user.email,
+                    'firstname': user.firstname,
+                    'lastname': user.lastname,
+                    'borrowed_books': borrowed_books
+                })
+
+            return JsonResponse({'users': user_borrowing_list}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return JsonResponse(
+                {'error': 'An error occurred while fetching user borrowings', 'detail': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
