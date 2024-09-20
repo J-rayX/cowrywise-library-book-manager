@@ -1,57 +1,78 @@
 version: '3'
 
 services:
-
   rabbitmq:
-      image: rabbitmq:management
-      ports:
-        - "5672:5672"
-        - "15672:15672"
-      networks:
-        - api-network
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - api-network
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - api-network
+
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root 
+      MYSQL_DATABASE: frontend_db
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "mysql"]
+      interval: 10s 
+      timeout: 10s   
+      retries: 10  
+    networks:
+      - api-network
+
 
   admin:
     build: ./admin_api
     container_name: admin_api
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "python manage.py makemigrations && python manage.py migrate && (python manage.py start_listener & python manage.py runserver 0.0.0.0:8001)"
     ports:
-      - "8000:8000"
+      - "8001:8001"
     depends_on:
-      - admin_db
-    # environment:
-    #   - DATABASE_URL=postgres://admin_user:password@postgres:5432/admin_db
-
-
-  admin_db:
-    image: postgres:13
+      postgres:
+        condition: service_healthy
     environment:
-      POSTGRES_DB: admin_db
-      POSTGRES_USER: admin_user
-      POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
-
+      - DATABASE_URL=postgres://postgres:password@postgres:5432/postgres
+    networks:
+      - api-network
 
   frontend:
     build: ./frontend_api
     container_name: frontend_api
-    command: python manage.py runserver 0.0.0.0:8001
+    command: >
+      sh -c "python manage.py makemigrations && python manage.py migrate && (python manage.py start_listener & python manage.py runserver 0.0.0.0:8000)"
     ports:
-      - "8001:8001"
+      - "8000:8000"
     depends_on:
-      - frontend_db
-    # environment:
-    #   - DATABASE_URL=mysql://frontend_user:password@mysql:3306/frontend_db
-
-
-  frontend_db:
-    image: mysql:5.7
+      mysql:
+        condition: service_healthy
     environment:
-      MYSQL_DATABASE: frontend_db
-      MYSQL_USER: frontend_user
-      MYSQL_PASSWORD: password
-    ports:
-      - "3306:3306"
+      - DATABASE_URL=mysql://mysql:root@mysql:3306/frontend_db 
+    networks:
+      - api-network
 
 networks:
   api-network:

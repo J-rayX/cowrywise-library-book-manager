@@ -1,12 +1,10 @@
-from django.shortcuts import render
-from rest_framework.decorators import api_view
+
 from rest_framework.views import APIView
-from rest_framework.response import Response
+
 from rest_framework import status
 from django.core.exceptions import ValidationError
 from .models import User
 
-from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
 from datetime import timedelta
 import json
@@ -71,7 +69,8 @@ class UserEnrollmentView(APIView):
     
     def send_user_enrolled_message(self, message):
         """ Sends user enrolled message to RabbitMQ """
-        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        # connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
         channel = connection.channel()
         channel.queue_declare(queue='user_enrolled', durable=False)
 
@@ -91,10 +90,16 @@ class BorrowBookView(APIView):
     def post(self, request, book_id):
         user_email = request.data.get('email')
         # book_id = request.data.get('book_id')
-        borrow_days = int(request.data.get('borrow_days'))
+        borrow_days = request.data.get('borrow_days')
         
         if not user_email or not borrow_days:
             return JsonResponse({'error': 'The [user_email and borrow_days] fields are required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            borrow_days = int(borrow_days) 
+        except ValueError:
+            return JsonResponse({'error': 'borrow_days value must be a valid integer'}, status=status.HTTP_400_BAD_REQUEST)
+
         
         try:
             user = User.objects.get(email=user_email)
@@ -151,7 +156,8 @@ class BorrowBookView(APIView):
         }, status=status.HTTP_201_CREATED)
 
     def send_borrow_message_to_queue(self, message):
-        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        # connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
         channel = connection.channel()
         channel.queue_declare(queue='book_borrowed', durable=False)
 
@@ -251,3 +257,5 @@ class FilterAllBooksView(APIView):
         #     return JsonResponse({'error': 'Book not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return JsonResponse({'error': 'Something went wrong', 'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+

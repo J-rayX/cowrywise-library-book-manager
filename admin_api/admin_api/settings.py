@@ -11,6 +11,14 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import sys
+
+import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -76,18 +84,29 @@ WSGI_APPLICATION = 'admin_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'admin_db',
-        'USER': 'admin_user',
+        'NAME': 'postgres',
+        'USER': 'postgres',
         'PASSWORD': 'password',
-        'HOST': 'localhost', # Local Host
-        # 'HOST': 'postgres',  # Docker Host
+        # 'HOST': 'localhost', # Local Host
+        'HOST': 'postgres',  # Docker Host
         'PORT': '5432',
 
     }
 }
+
+
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',  # in-memory dB for testing
+        }
+    }
+
 
 
 # Password validation

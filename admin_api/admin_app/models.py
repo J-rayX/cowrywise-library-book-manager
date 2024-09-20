@@ -23,7 +23,6 @@ class Book(models.Model):
         ]
 
 
-
 class AdminUser(models.Model):
     email = models.EmailField(unique=True)
     firstname = models.CharField(max_length=100)
@@ -32,8 +31,6 @@ class AdminUser(models.Model):
 
     def __str__(self):
         return f"{self.firstname} {self.lastname}"
-
-
 
 
 class AdminBorrowing(models.Model):

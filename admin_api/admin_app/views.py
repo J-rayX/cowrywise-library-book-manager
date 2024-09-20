@@ -82,7 +82,8 @@ class AddBookView(APIView):
     
 
     def send_book_create_message_to_queue(self, message):
-        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        # connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
         # connection = pika.BlockingConnection(pika.ConnectionParameters(
         #     host=settings.RABBITMQ_HOST, port=settings.RABBITMQ_PORT
         # ))
@@ -99,7 +100,6 @@ class AddBookView(APIView):
         )
         connection.close()
         
-
 
 class RemoveBookView(APIView):
     def delete(self, request, book_id):
@@ -120,48 +120,49 @@ class RemoveBookView(APIView):
             return JsonResponse({'error': 'Book not found'}, status=status.HTTP_404_NOT_FOUND)
         
     def send_delete_book_message(self, book_id):
-        try:
-            connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
-            channel = connection.channel()
-            channel.queue_declare(queue='book_removed', durable=False)
+        # connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
+        channel = connection.channel()
+        channel.queue_declare(queue='book_removed', durable=False)
 
-            message = json.dumps({'book_id': book_id})
+        message = json.dumps({'book_id': book_id})
 
-            channel.basic_publish(exchange='',
-                                routing_key='book_removed',
-                                body=message)
-            print(f"Sent delete event for book ID: {book_id}")
-        except Exception as e:
-            print(f"Unable to reach RabbitMQ: {str(e)}")
-            return JsonResponse({'error': 'Trouble attending to request'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        finally:
-            if connection:
-                connection.close()
-
+        channel.basic_publish(exchange='',
+                            routing_key='book_removed',
+                            body=message)
+        print(f"Sent delete event for book ID: {book_id}")
+        connection.close()
 
 
 class UnavailableBooksView(APIView):
     def get(self, request):
-        unavailable_books = Book.objects.filter(available=False)
-        books_list = [
-            {
-                'book_id': book.book_id,
-                'title': book.title,
-                'author': book.author,
-                'publisher': book.publisher,
-                'category': book.category,
-                'available_date': book.return_date
-            }
-            for book in unavailable_books
-        ]
-        return JsonResponse({'books': books_list}, status=status.HTTP_200_OK)
-
+        try:
+            unavailable_books = Book.objects.filter(available=False)
+            books_list = [
+                {
+                    'book_id': book.book_id,
+                    'title': book.title,
+                    'author': book.author,
+                    'publisher': book.publisher,
+                    'category': book.category,
+                    'available_date': book.return_date
+                }
+                for book in unavailable_books
+            ]
+            return JsonResponse({'books': books_list}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(f"Error fetching unavailable books- {str(e)}")
+            return JsonResponse({'error': 'An error occurred while fetching unavailable books.'}, 
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class AdminUserListView(APIView):
     def get(self, request):
         try:
             users = AdminUser.objects.all()
+            if not users:
+                return JsonResponse({'error': 'No users found'}, status=status.HTTP_404_NOT_FOUND)
+
             user_list = [{
                     'email': user.email,
                     'firstname': user.firstname,
@@ -169,11 +170,7 @@ class AdminUserListView(APIView):
                     'created_at': user.created_at
                 } for user in users
             ]
-
             return JsonResponse({'users': user_list}, status=status.HTTP_200_OK)
-
-        except AdminUser.DoesNotExist:
-            return JsonResponse({'error': 'No users found'}, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as e:
             return JsonResponse(
@@ -181,8 +178,6 @@ class AdminUserListView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         
-
-
 
 class UserBorrowingListView(APIView):
     def get(self, request):
@@ -214,3 +209,6 @@ class UserBorrowingListView(APIView):
                 {'error': 'An error occurred while fetching user borrowings', 'detail': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+        
+
+
