@@ -5,7 +5,8 @@ from django.utils.dateparse import parse_datetime
 
 
 def consume_borrowed():
-    connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+    # connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
     channel = connection.channel()
     channel.queue_declare(queue='book_borrowed')
 
@@ -48,7 +49,9 @@ def consume_borrowed():
 
 
 def consume_user_enrolled():
-    connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+    print("Waiting for user enrollment events...")
+    # connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
     channel = connection.channel()
     channel.queue_declare(queue='user_enrolled', durable=False)
 

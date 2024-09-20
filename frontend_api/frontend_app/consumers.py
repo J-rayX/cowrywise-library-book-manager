@@ -14,7 +14,8 @@ django.setup()
 from .models import UserBook 
 
 def consume_book_added():
-    connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+    # connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
     # connection = pika.BlockingConnection(pika.ConnectionParameters( host='localhost', port=5672 ))
     channel = connection.channel()   
     channel.queue_declare(queue='book_added')
@@ -65,7 +66,8 @@ def consume_book_added():
 
 
 def consume_book_removed():
-    connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+    # connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
     channel = connection.channel()
     # channel.queue_declare(queue='book_removed')
     channel.queue_declare(queue='book_removed', durable=False)

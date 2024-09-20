@@ -69,7 +69,8 @@ class UserEnrollmentView(APIView):
     
     def send_user_enrolled_message(self, message):
         """ Sends user enrolled message to RabbitMQ """
-        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        # connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
         channel = connection.channel()
         channel.queue_declare(queue='user_enrolled', durable=False)
 
@@ -155,7 +156,8 @@ class BorrowBookView(APIView):
         }, status=status.HTTP_201_CREATED)
 
     def send_borrow_message_to_queue(self, message):
-        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        # connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
         channel = connection.channel()
         channel.queue_declare(queue='book_borrowed', durable=False)
 

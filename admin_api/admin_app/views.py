@@ -82,7 +82,8 @@ class AddBookView(APIView):
     
 
     def send_book_create_message_to_queue(self, message):
-        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        # connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
         # connection = pika.BlockingConnection(pika.ConnectionParameters(
         #     host=settings.RABBITMQ_HOST, port=settings.RABBITMQ_PORT
         # ))
@@ -119,7 +120,8 @@ class RemoveBookView(APIView):
             return JsonResponse({'error': 'Book not found'}, status=status.HTTP_404_NOT_FOUND)
         
     def send_delete_book_message(self, book_id):
-        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        # connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
         channel = connection.channel()
         channel.queue_declare(queue='book_removed', durable=False)
 
