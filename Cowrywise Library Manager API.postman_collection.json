@@ -1,0 +1,1105 @@
+{
+	"info": {
+		"_postman_id": "8156032b-c967-4f9d-a162-acc40cfac5b5",
+		"name": "Cowrywise Library Manager API",
+		"description": "## Description\n\nThis collection contains endpoints for managing user enrollment and book management in the Cowrywise Library Service.\n\n**Created by:**  \nJekayin-Oluwa Olabemiwo for the Cowrywise BE/Infra role advertised at [https://cowrywise.breezy.hr/p/b8872b4dea60-backend-engineer-infrastructure-api-engineer-devops<br>](https://cowrywise.breezy.hr/p/b8872b4dea60-backend-engineer-infrastructure-api-engineer-devops)  \n**The service is made up of two APIs:**\n\n**\\- Frontend API:** allows users to enroll, borrow books, and retrieve available books.  \n**\\- Admin API:** allows the library administrator to manage books and monitor user enrollments.\n\n## **Quick breakdown of Endpoints:**\n\n**Frontend API:**\n\n- `users/enroll/` : **Enroll users** into the library using their email, firstname and lastname.\n    \n- `books/available/`: **List all available books**\n    \n- `books/` : **Get a book** by its `book_id`\n    \n- `books/filter/`: **Filter Books**\n    \n    - by publishers e.g Wiley, Apress, Manning\n        \n    - by category e.g fiction, technology, science\n        \n- `books/borrow/`: **Borrow books** by `book_id` and specify how long you want it for in days.\n    \n\n**Admin API:**\n\n- `books/add/` : **Add new books** to the catalogue\n    \n- `books/remove/` : **Remove a book** from the catalogue.\n    \n- `books/unavailable/` : **List users** enrolled in the library.\n    \n- `users/`: **List users** and the **books they have borrowed**\n    \n- `users/borrow/`: **List the books that are not available** for borrowing (showing the day it will be available)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20486603"
+	},
+	"item": [
+		{
+			"name": "Frontend_API",
+			"item": [
+				{
+					"name": "Add User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"jkaylight@gmail.com\",\n  \"firstname\": \"JekayinOluwa\",\n  \"lastname\": \"Olabemiwo\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/frontend/users/enroll/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"frontend",
+								"users",
+								"enroll",
+								""
+							]
+						},
+						"description": "This is the endpoint that allows a user to enroll in the library. The email you supply will continue to be the user identifier in the system."
+					},
+					"response": [
+						{
+							"name": "Ex:Add User",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"jkaylight@gmail.com\",\n  \"firstname\": \"JekayinOluwa\",\n  \"lastname\": \"Olabemiwo\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/frontend/users/enroll/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"frontend",
+										"users",
+										"enroll",
+										""
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 20 Sep 2024 18:18:45 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.10.15"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "POST, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "70"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"New user, JekayinOluwa Olabemiwo enrolled! 🔥\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Available Books",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/frontend/books/available/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"frontend",
+								"books",
+								"available",
+								""
+							]
+						},
+						"description": "You can use this book to list out all available books and also filter through the catalogue using the `publisher` and `category` query parameters."
+					},
+					"response": [
+						{
+							"name": "Ex:Available Books",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/frontend/books/available/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"frontend",
+										"books",
+										"available",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 20 Sep 2024 18:20:15 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.10.15"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "411"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"books\": [\n        {\n            \"book_id\": 1,\n            \"title\": \"Anthills of the Savannah\",\n            \"author\": \"Chinua Achebe\",\n            \"publisher\": \"Heinemann\",\n            \"category\": \"Fiction\"\n        },\n        {\n            \"book_id\": 2,\n            \"title\": \"The Design of Everyday Things\",\n            \"author\": \"Donald A. Norman\",\n            \"publisher\": \"MIT Press\",\n            \"category\": \"Design\"\n        },\n        {\n            \"book_id\": 3,\n            \"title\": \"Determination Unshakable\",\n            \"author\": \"Goodluck Jonathan\",\n            \"publisher\": \"Clear-Coast\",\n            \"category\": \"Writing\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Book By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/frontend/books/3",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"frontend",
+								"books",
+								"3"
+							]
+						},
+						"description": "This endpoint allows you to get the details of a book by suplying the `book_id` ."
+					},
+					"response": [
+						{
+							"name": "Ex:Get Book By Id",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/frontend/books/3",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"frontend",
+										"books",
+										"3"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 20 Sep 2024 18:44:45 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.10.15"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "213"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"book_id\": 3,\n    \"title\": \"Determination Unshakable\",\n    \"author\": \"Goodluck Jonathan\",\n    \"publisher\": \"Clear-Coast\",\n    \"category\": \"Writing\",\n    \"available\": true,\n    \"added_at\": \"2024-09-20T18:19:59.047Z\",\n    \"return_date\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Filter Books",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/frontend/books/filter/?publisher=4th%20Estate&category=Fiction",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"frontend",
+								"books",
+								"filter",
+								""
+							],
+							"query": [
+								{
+									"key": "publisher",
+									"value": "4th%20Estate"
+								},
+								{
+									"key": "category",
+									"value": "Fiction"
+								}
+							]
+						},
+						"description": "Use this endpoint to filter through the catalogue of books. You can filter by `publisher` and `category`."
+					},
+					"response": [
+						{
+							"name": "Ex:Filter Books with spaced names",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8000/frontend/books/filter/?publisher=4th%20Estate&category=Fiction",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"frontend",
+										"books",
+										"filter",
+										""
+									],
+									"query": [
+										{
+											"key": "publisher",
+											"value": "4th%20Estate"
+										},
+										{
+											"key": "category",
+											"value": "Fiction"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 18 Sep 2024 23:34:40 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.11.10"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "349"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"books\": [\n        {\n            \"book_id\": 22,\n            \"title\": \"Half of a Yellow Sun\",\n            \"author\": \"Chimamanda Adichie\",\n            \"publisher\": \"4th Estate\",\n            \"category\": \"Fiction\",\n            \"available\": true,\n            \"return_date\": null\n        },\n        {\n            \"book_id\": 23,\n            \"title\": \"Notes on Grief\",\n            \"author\": \"Chimamanda Adichie\",\n            \"publisher\": \"4th Estate\",\n            \"category\": \"Fiction\",\n            \"available\": true,\n            \"return_date\": null\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Borrow Book",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jkaylight4@gmail.com\",\n    \"borrow_days\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/frontend/books/borrow/24",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"frontend",
+								"books",
+								"borrow",
+								"24"
+							]
+						},
+						"description": "A user can use this endpoint to borrow a book. A borrowed book becomes unavailable in the catalogue after a succesful borrow."
+					},
+					"response": [
+						{
+							"name": "Ex:Borrow Book",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"jkaylight@gmail.com\",\n    \"borrow_days\": 4\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/frontend/books/borrow/19",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"frontend",
+										"books",
+										"borrow",
+										"19"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 18 Sep 2024 22:27:59 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.11.10"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "POST, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "60"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Book borrowed successfully\",\n    \"borrowing_id\": 2\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Admin_API",
+			"item": [
+				{
+					"name": "Add Book",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Determination Unshakable\",\n    \"author\": \"Goodluck Jonathan\",\n    \"publisher\": \"Clear-Coast\",\n    \"category\": \"Writing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8001/admin/books/add/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8001",
+							"path": [
+								"admin",
+								"books",
+								"add",
+								""
+							]
+						},
+						"description": "Use this endpont to add new books to the catalogue. The auto-generated `book_id` returned in the response will be the identifier for the book in the catalogue."
+					},
+					"response": [
+						{
+							"name": "Ex:Add Book",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"The Adventures of Moni Mambou\",\n    \"author\": \"Guy Menga\",\n    \"publisher\": \"Evans Brothers\",\n    \"category\": \"Fiction\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8001/admin/books/add/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8001",
+									"path": [
+										"admin",
+										"books",
+										"add",
+										""
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 18 Sep 2024 16:03:49 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.11.10"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "POST, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "245"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"New book added! 🔥\",\n    \"book\": {\n        \"book_id\": 7,\n        \"title\": \"The Adventures of Moni Mambou\",\n        \"author\": \"Guy Menga\",\n        \"publisher\": \"Evans Brothers\",\n        \"category\": \"Fiction\",\n        \"available\": true,\n        \"added_at\": \"2024-09-18T16:03:49.816Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Remove Book",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8001/admin/books/remove/18",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8001",
+							"path": [
+								"admin",
+								"books",
+								"remove",
+								"18"
+							]
+						},
+						"description": "Use this endpoint to delete a book from the catalogue. Pass in the `book_id` as a query parameter."
+					},
+					"response": [
+						{
+							"name": "Ex:Remove Book",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8001/admin/books/remove/18",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8001",
+									"path": [
+										"admin",
+										"books",
+										"remove",
+										"18"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 18 Sep 2024 19:40:03 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.11.10"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "DELETE, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "41"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Book removed successfully!\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Unavailable Books",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8001/admin/books/unavailable/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8001",
+							"path": [
+								"admin",
+								"books",
+								"unavailable",
+								""
+							]
+						},
+						"description": "This endpoints allows you to fetch a list of books that have been borrowed from the library. Borrowed books are unavailable for borrowing till they are returned."
+					},
+					"response": [
+						{
+							"name": "Ex:Unavailable Books",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8001/admin/books/unavailable/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8001",
+									"path": [
+										"admin",
+										"books",
+										"unavailable",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 18 Sep 2024 15:52:22 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.11.10"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "650"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"books\": [\n        {\n            \"book_id\": 1,\n            \"title\": \"Determination Unshakable\",\n            \"author\": \"Goodluck Jonathan\",\n            \"publisher\": \"Clear-Coast\",\n            \"category\": \"Writing\",\n            \"available_date\": null\n        },\n        {\n            \"book_id\": 2,\n            \"title\": \"Expert Secrets\",\n            \"author\": \"Russel Brunson\",\n            \"publisher\": \"Morgan-James Publishing\",\n            \"category\": \"Marketing\",\n            \"available_date\": null\n        },\n        {\n            \"book_id\": 3,\n            \"title\": \"Expert Secrets\",\n            \"author\": \"Russel brunson\",\n            \"publisher\": \"Morgan-James Publishing\",\n            \"category\": \"Marketing\",\n            \"available_date\": null\n        },\n        {\n            \"book_id\": 5,\n            \"title\": \"The Design of Everyday Things\",\n            \"author\": \"Donald A. Norman\",\n            \"publisher\": \"MIT Press\",\n            \"category\": \"Design\",\n            \"available_date\": null\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "List Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8001/admin/users/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8001",
+							"path": [
+								"admin",
+								"users",
+								""
+							]
+						},
+						"description": "You can fetch a list of users enrolled in the library."
+					},
+					"response": [
+						{
+							"name": "Ex:List Users",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8001/admin/users/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8001",
+									"path": [
+										"admin",
+										"users",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 19 Sep 2024 01:01:40 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.11.10"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "386"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"users\": [\n        {\n            \"email\": \"jkaylight2@gmail.com\",\n            \"firstname\": \"JekayinOluwaa\",\n            \"lastname\": \"O.\",\n            \"created_at\": \"2024-09-19T00:45:38.250Z\"\n        },\n        {\n            \"email\": \"jkaylight3@gmail.com\",\n            \"firstname\": \"JekayinOluwaa\",\n            \"lastname\": \"O.\",\n            \"created_at\": \"2024-09-19T00:45:38.252Z\"\n        },\n        {\n            \"email\": \"jkaylight4@gmail.com\",\n            \"firstname\": \"JekayinOluwaa\",\n            \"lastname\": \"O.\",\n            \"created_at\": \"2024-09-19T00:45:50.732Z\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "List User-Borrowed-Books",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8001/admin/users/borrow/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8001",
+							"path": [
+								"admin",
+								"users",
+								"borrow",
+								""
+							]
+						},
+						"description": "This endpoint lists out all the users and show the books they borrowed if any."
+					},
+					"response": [
+						{
+							"name": "Ex:List-User-Borrowed-Books",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8001/admin/users/borrow/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8001",
+									"path": [
+										"admin",
+										"users",
+										"borrow",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 19 Sep 2024 01:55:55 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.11.10"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "495"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"users\": [\n        {\n            \"user_email\": \"jkaylight2@gmail.com\",\n            \"firstname\": \"JekayinOluwaa\",\n            \"lastname\": \"O.\",\n            \"borrowed_books\": []\n        },\n        {\n            \"user_email\": \"jkaylight3@gmail.com\",\n            \"firstname\": \"JekayinOluwaa\",\n            \"lastname\": \"O.\",\n            \"borrowed_books\": []\n        },\n        {\n            \"user_email\": \"jkaylight4@gmail.com\",\n            \"firstname\": \"JekayinOluwaa\",\n            \"lastname\": \"O.\",\n            \"borrowed_books\": [\n                {\n                    \"book_id\": 22,\n                    \"borrow_days\": 5,\n                    \"return_date\": \"2024-09-24T01:40:19.411Z\"\n                },\n                {\n                    \"book_id\": 24,\n                    \"borrow_days\": 5,\n                    \"return_date\": \"2024-09-24T01:55:48.038Z\"\n                }\n            ]\n        }\n    ]\n}"
+						}
+					]
+				}
+			],
+			"description": "The Admin API in the Cowrywise Book Library System is to be used by an admin to:"
+		}
+	]
+}
