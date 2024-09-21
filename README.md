@@ -3,6 +3,11 @@
 ## Overview
 The Cowrywise Library Book Manager is a RESTful API designed to manage user enrollment, book catalogue, and administrative tasks within a library system. It allows users to enroll, borrow books, retrieve available books, and enables admins to manage the library's catalogue.
 
+It is an assessment project for the Backend/DevOps/Infra application advertised at: 
+https://cowrywise.breezy.hr/p/b8872b4dea60-backend-engineer-infrastructure-api-engineer-devops
+
+Developer: [JekayinOluwa Olabemiwo](https://github.com/J-rayX)
+
 ## Features
 - User enrollment
 - Borrowing books
