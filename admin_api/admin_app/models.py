@@ -3,7 +3,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
-
 class Book(models.Model):
     book_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=200)
@@ -19,7 +18,7 @@ class Book(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['title', 'author'], name='unique_book')
+            models.UniqueConstraint(fields=["title", "author"], name="unique_book")
         ]
 
 
@@ -42,4 +41,3 @@ class AdminBorrowing(models.Model):
 
     def __str__(self):
         return f"{self.user} borrowed book with ID {self.book_id}"
-    

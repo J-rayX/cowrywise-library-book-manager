@@ -1,32 +1,33 @@
-# Cowrywise Library Book Manager
+# Cowrywise Library Book Manager 📚
 
 ## Overview
-The Cowrywise Library Book Manager is a RESTful API designed to manage user enrollment, book catalogue, and administrative tasks within a library system. It allows users to enroll, borrow books, retrieve available books, and enables admins to manage the library's catalogue.
+The Cowrywise Library Book Manager is a RESTful API designed to manage user enrollment, book catalogue, and administrative tasks within a library system. It allows users to enroll, borrow books, retrieve available books, and enables admins to manage the library's catalogue. It implements Django REST, RabbitMQ event-driven async. system, PostgresSQL & MySQL databases and Docker container deploys. 
 
 It is an assessment project for the Backend/DevOps/Infra application advertised at: 
 https://cowrywise.breezy.hr/p/b8872b4dea60-backend-engineer-infrastructure-api-engineer-devops
 
-Developer: [JekayinOluwa Olabemiwo](https://github.com/J-rayX)
+Developer: [JekayinOluwa Olabemiwo](https://github.com/J-rayX) 👨‍💻
 
-## Features
+## Features ✨
 - User enrollment
 - Borrowing books
 - Retrieving book details
 - Admin functionalities for adding and removing books
 - Filtering available books
 
-## Table of Contents
+## Table of Contents 📖
 - [Installation](#installation)
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
 - [Quickstart Guide](#quickstart-guide)
+- [Documentation](#documentation)
 - [Postman Collection](#postman-collection)
 - [Service Communication](#service-communication)
 - [Docker Setup](#docker-setup)
 - [Contributing](#contributing)
 - [License](#license)
 
-## Installation
+## Installation ⚙️
 
 ### Prerequisites
 - Python 3.x
@@ -68,11 +69,10 @@ Developer: [JekayinOluwa Olabemiwo](https://github.com/J-rayX)
    python manage.py runserver
    ```
 
-## Usage
+## Usage 🛠️
 You can interact with the API using tools like Postman or cURL. Refer to the [API Endpoints](#api-endpoints) section for details on available endpoints.
 
-
-## API Endpoints
+## API Endpoints 📡
 
 ### User Enrollment
 - **POST** `/users/enroll/` - Enroll a new user.
@@ -88,8 +88,7 @@ You can interact with the API using tools like Postman or cURL. Refer to the [AP
 - **GET** `/users/` - List all library users.
 - **GET** `/users/borrow/` - Fetch all users with the books they borrowed.
 
-
-## Quickstart Guide
+## Quickstart Guide 🚀
 This quickstart guide demonstrates how to use the `enroll` and `add book` endpoints of the Cowrywise Library Book Manager API using cURL.
 
 ## Prerequisites
@@ -100,7 +99,6 @@ This quickstart guide demonstrates how to use the `enroll` and `add book` endpoi
 ## 1. User Enrollment
 
 To enroll a new user, use the following cURL command:
-
 
 ### cURL Command
 ```curl
@@ -123,15 +121,12 @@ If successful, you should receive a response like:
 }
 ```
 
-
-
 ## 2. Admin Add Book
 
 To add a new book as an admin, use the following cURL command:
 
 ### cURL Command
 ```bash
-
 curl -X POST http://<your-api-host>/books/add/ \
 -H "Content-Type: application/json" \
 -d '{
@@ -141,7 +136,6 @@ curl -X POST http://<your-api-host>/books/add/ \
 "category": "Writing"
 }'
 ```
-
 
 ### Expected Response
 
@@ -154,20 +148,26 @@ If successful, you should receive a response like:
 
 By now, you have successfully used the `enroll` and `add book` endpoints of the Cowrywise Library Book Manager API using cURL. Adjust the `<your-api-host>` placeholder with the actual host where the API is deployed.
 
+## Documentation 📚
 
+You can check out the full developer documentation at [Cowrywise Library Manager API Documentation](https://jkaylight.gitbook.io/cowrywise-library-manager-api/). 
 
-## Postman Collection
+It includes:
+- Key concept explanations
+- API reference
+- Quickstart guide
+
+## Postman Collection 📥
 You can copy or download the Postman collection JSON file for the Cowrywise Library Manager API from the following link:
 [Cowrywise Library Manager API.postman_collection.json](https://github.com/J-rayX/cowrywise-library-book-manager/Cowrywise%20Library%20Manager%20API.postman_collection.json)
 
-Then, import the downloaded file in your Postman to view the full documention on all endpoints with example requests and responses.
+Then, import the downloaded file in your Postman to view the full documentation on all endpoints with example requests and responses.
 
-
-## Database Management and Inter-Service Communication
+## Service Communication 🔗
 
 The Frontend API and Admin API communicate changes made to each other as they use different data stores. RabbitMQ powers the event-driven messaging system between the two services.
 
-## Database Usage
+## Database Usage 🗄️
 
 - **Frontend API:** Uses PostgreSQL
 - **Admin API:** Uses MySQL
@@ -182,7 +182,7 @@ The Frontend API and Admin API communicate changes made to each other as they us
 - **AdminUser Table:** Saves the newly enrolled users from the Frontend API.
 - **AdminBorrowing Table:** Keeps track of user borrowings from the Frontend API.
 
-## Communication Points
+## Communication Points 📬
 
 1. **User Enrollment:**
    - The newly added user information is queued as a message on the `user_enrolled` RabbitMQ queue.
@@ -202,8 +202,7 @@ The Frontend API and Admin API communicate changes made to each other as they us
 
 This structure provides a clear overview of how the Frontend API and Admin API interact, along with their respective database structures and communication points.
 
-
-## Docker Setup
+## Docker Setup 🐳
 To run the application in a Docker container, ensure you have Docker installed. Use the following commands:
 
 1. Build the Docker image:
@@ -216,7 +215,7 @@ To run the application in a Docker container, ensure you have Docker installed. 
    docker run -p 8000:8000 cowrywise-library-book-manager
    ```
 
-## Contributing
+## Contributing 🤝
 Contributions are welcome! Please follow these steps:
 1. Fork the repository.
 2. Create a new branch (`git checkout -b feature-branch`).
@@ -224,5 +223,5 @@ Contributions are welcome! Please follow these steps:
 4. Push to the branch (`git push origin feature-branch`).
 5. Create a pull request.
 
-## License
+## License 📜
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
