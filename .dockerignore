@@ -36,3 +36,12 @@ docker-compose.yml
 dist/
 build/
 *.egg
+
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.git
+*.env
+.env
+*.md
